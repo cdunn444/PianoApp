@@ -122,7 +122,7 @@ export const STARTER_SONGS: Song[] = [
       title: 'Left My Woman',
       artist: 'The Wild Feathers',
       format: 'chords',
-      bpm: 88,
+      bpm: 70,
       timeSig: [4, 4],
       key: 'C',
       options: { pattern: 'half' },
