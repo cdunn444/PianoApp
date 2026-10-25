@@ -31,6 +31,15 @@ describe('staff layout', () => {
     expect(l.stems.length).toBe(4);
   });
 
+  it('beams pairs of eighths that fill a beat', () => {
+    const song = importSong('LH: C3/q r/q C3/e C3/e r/q', { title: 't', format: 'notes' });
+    const l = layoutSong(song);
+    expect(l.beams.length).toBe(1);
+    const beamed = l.stems.filter((s) => s.beamed);
+    expect(beamed.length).toBe(2);
+    expect(beamed[0].y2).toBe(beamed[1].y2);
+  });
+
   it('prints accidentals relative to the key', () => {
     const song = importSong('key: G\nRH: F#4/q F4/q C#5/q', { title: 't', format: 'notes' });
     const l = layoutSong(song);

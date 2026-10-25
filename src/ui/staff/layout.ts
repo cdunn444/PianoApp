@@ -37,6 +37,17 @@ export interface Stem {
   y2: number;
   up: boolean;
   head: HeadType;
+  hand: Hand;
+  start: number;
+  /** True when a beam replaces this stem's flag. */
+  beamed?: boolean;
+}
+
+export interface Beam {
+  x1: number;
+  x2: number;
+  y: number;
+  up: boolean;
 }
 
 export interface LaidRest {
@@ -52,6 +63,7 @@ export interface Layout {
   key: KeySignature;
   notes: LaidNote[];
   stems: Stem[];
+  beams: Beam[];
   rests: LaidRest[];
   barlines: { x: number; bar: number }[];
   chords: { x: number; name: string }[];
@@ -172,7 +184,26 @@ export function layoutSong(song: Song): Layout {
     const len = 3.5 * LS;
     const hw = 14.17 / 2;
     const x = g[0].x + (up ? hw - 0.7 : -hw + 0.7);
-    stems.push(up ? { x, y1: bottom, y2: top - len, up, head: g[0].head } : { x, y1: top, y2: bottom + len, up, head: g[0].head });
+    const base = { x, up, head: g[0].head, hand: g[0].hand, start: g[0].start };
+    stems.push(up ? { ...base, y1: bottom, y2: top - len } : { ...base, y1: top, y2: bottom + len });
+  }
+
+  // Beams: two eighth notes in the same hand that fill one beat are beamed together.
+  const beams: Beam[] = [];
+  const eighths = stems.filter((st) => st.head === 'eighth').sort((a, b) => a.start - b.start);
+  for (let i = 0; i < eighths.length; i++) {
+    const a = eighths[i];
+    if (a.beamed) continue;
+    const b = eighths.find(
+      (st) => st !== a && !st.beamed && st.hand === a.hand && Math.abs(st.start - (a.start + 0.5)) < 1e-6 && Math.floor(st.start) === Math.floor(a.start),
+    );
+    if (!b) continue;
+    // Give both stems the first note's direction, then level their ends.
+    if (b.up !== a.up) flipStem(b, a.up);
+    const y = a.up ? Math.min(a.y2, b.y2) : Math.max(a.y2, b.y2);
+    a.y2 = b.y2 = y;
+    a.beamed = b.beamed = true;
+    beams.push({ x1: a.x, x2: b.x, y, up: a.up });
   }
 
   // Rests: per hand, fill gaps inside each bar.
@@ -223,6 +254,7 @@ export function layoutSong(song: Song): Layout {
     key,
     notes,
     stems,
+    beams,
     rests,
     barlines,
     chords: song.chords.map((c) => ({ x: beatX(c.start), name: c.name })),
@@ -230,6 +262,16 @@ export function layoutSong(song: Song): Layout {
     totalBeats,
     width: beatX(totalBeats),
   };
+}
+
+function flipStem(st: Stem, up: boolean) {
+  const len = 3.5 * LS;
+  const hw = 14.17 / 2;
+  const headY = st.up ? st.y1 : st.y1; // y1 is always the notehead end of the stem
+  st.x = st.x + (up ? 2 * hw - 1.4 : -(2 * hw - 1.4));
+  st.up = up;
+  st.y1 = headY;
+  st.y2 = up ? headY - len : headY + len;
 }
 
 export function durationOf(head: HeadType, dotted: boolean): number {

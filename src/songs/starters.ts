@@ -101,7 +101,7 @@ export const STARTER_SONGS: Song[] = [
       bpm: 80,
       timeSig: [3, 4],
       key: 'G',
-      options: { pattern: 'half', beatsPerChord: 3 },
+      options: { pattern: 'simply', beatsPerChord: 3 },
     }),
   ),
   starter(
@@ -113,7 +113,7 @@ export const STARTER_SONGS: Song[] = [
       bpm: 72,
       timeSig: [4, 4],
       key: 'C',
-      options: { pattern: 'half' },
+      options: { pattern: 'simply' },
     }),
   ),
   starter(
@@ -125,7 +125,7 @@ export const STARTER_SONGS: Song[] = [
       bpm: 70,
       timeSig: [4, 4],
       key: 'C',
-      options: { pattern: 'half' },
+      options: { pattern: 'simply' },
     }),
   ),
 ];

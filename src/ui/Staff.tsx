@@ -188,9 +188,12 @@ function ScrollingContent({ layout, song, noteRefs }: { layout: Layout; song: So
       {layout.stems.map((s, i) => (
         <g key={`s${i}`}>
           <line x1={s.x} x2={s.x} y1={s.y1} y2={s.y2} className="stem" />
-          {s.head === 'eighth' && <path d={(s.up ? GLYPHS.flag8thUp : GLYPHS.flag8thDown).d} transform={`translate(${s.x - 0.6} ${s.y2})`} className="glyph" />}
+          {s.head === 'eighth' && !s.beamed && <path d={(s.up ? GLYPHS.flag8thUp : GLYPHS.flag8thDown).d} transform={`translate(${s.x - 0.6} ${s.y2})`} className="glyph" />}
           {s.head === 'sixteenth' && <path d={(s.up ? GLYPHS.flag16thUp : GLYPHS.flag16thDown).d} transform={`translate(${s.x - 0.6} ${s.y2})`} className="glyph" />}
         </g>
+      ))}
+      {layout.beams.map((b, i) => (
+        <rect key={`beam${i}`} x={Math.min(b.x1, b.x2) - 0.7} y={b.up ? b.y : b.y - LS * 0.45} width={Math.abs(b.x2 - b.x1) + 1.4} height={LS * 0.45} className="beam" />
       ))}
       {layout.notes.map((n) => (
         <Note key={n.id} n={n} register={(el) => (el ? noteRefs.set(n.id, el) : noteRefs.delete(n.id))} />

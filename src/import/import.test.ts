@@ -85,6 +85,15 @@ describe('voicing + patterns', () => {
     expect(voiceLeftHand(parseChord('G')!, [67, 71, 74])).toBe(55);
     expect(voiceLeftHand(parseChord('C/E')!, [60, 64, 67])).toBe(52);
   });
+  it('simply pattern: bass on 1 and 3 (eighths), chord on 2 and 4', () => {
+    const notes = applyPattern([{ start: 0, duration: 4, rh: [64, 67, 71], lh: 52 }], 'simply');
+    expect(notes.filter((n) => n.hand === 'L').map((n) => [n.start, n.duration])).toEqual([[0, 1], [2, 0.5], [2.5, 0.5]]);
+    expect(notes.filter((n) => n.hand === 'R').map((n) => n.start)).toEqual([1, 1, 1, 3, 3, 3]);
+    const waltz = applyPattern([{ start: 0, duration: 3, rh: [67, 71, 74], lh: 55 }], 'simply');
+    expect(waltz.map((n) => [n.hand, n.start])).toEqual([['L', 0], ['R', 1], ['R', 1], ['R', 1], ['R', 2], ['R', 2], ['R', 2]]);
+    const quick = applyPattern([{ start: 0, duration: 1, rh: [60, 64, 67], lh: 48 }], 'simply');
+    expect(quick.map((n) => [n.hand, n.start, n.duration])).toEqual([['L', 0, 0.5], ['R', 0.5, 0.5], ['R', 0.5, 0.5], ['R', 0.5, 0.5]]);
+  });
   it('half pattern gives two hits per bar', () => {
     const notes = applyPattern([{ start: 0, duration: 4, rh: [67, 71, 74], lh: 43 }], 'half');
     expect(notes.length).toBe(8);
@@ -145,6 +154,6 @@ describe('importSong', () => {
     const s = importSong('G | D | Em | C', { title: 'Test', options: { transpose: 2 } });
     expect(s.key).toBe('A');
     expect(s.chords.map((c) => c.name)).toEqual(['A', 'E', 'F#m', 'D']);
-    expect(s.notes.length).toBe(4 * 8);
+    expect(s.notes.length).toBe(4 * 9);
   });
 });

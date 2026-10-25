@@ -9,7 +9,7 @@ export interface NoteEvent {
 }
 
 export type SourceFormat = 'chords' | 'tab' | 'notes';
-export type Pattern = 'whole' | 'half' | 'quarter' | 'broken';
+export type Pattern = 'simply' | 'whole' | 'half' | 'quarter' | 'broken';
 export type Voicing = 'position' | 'root' | 'smooth';
 
 export interface SongOptions {
@@ -56,7 +56,7 @@ export interface Song {
 }
 
 export const DEFAULT_OPTIONS: SongOptions = {
-  pattern: 'half',
+  pattern: 'simply',
   voicing: 'root',
   transpose: 0,
   splitPoint: 60,

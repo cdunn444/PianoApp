@@ -48,8 +48,9 @@ G | D | Em C | G          <- bar lines: chords in one bar share it
 
 Without bar lines every chord lasts **Beats per chord** (default one bar). The arrangement is
 left hand root, right hand triad (seventh chords become root–third–seventh) in root position
-around middle C (C = C E G), with a selectable rhythm **Pattern**: whole notes, half notes,
-quarter notes, or broken chords. **Right-hand chords** can be switched to inversions for
+around middle C (C = C E G), with a selectable rhythm **Pattern**. The default is the Simply Piano
+accompaniment: bass note on beat 1, two bass eighths on beat 3, chord on beats 2 and 4. Whole,
+half, quarter and broken-chord patterns are also available. **Right-hand chords** can be switched to inversions for
 smaller hand movements once root position feels easy.
 
 ### 2. Guitar tab

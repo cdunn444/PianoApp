@@ -92,6 +92,7 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
 .barline { stroke: var(--paper-ink); }
 .ledger { stroke: var(--paper-ink); stroke-width: 1; }
 .stem { stroke: var(--paper-ink); stroke-width: 1.4; }
+.beam { fill: var(--paper-ink); }
 .glyph { fill: var(--paper-ink); }
 .rest .glyph { fill: #4a4068; }
 .bar-number { font-size: 7px; fill: #6f6392; }

@@ -105,6 +105,7 @@ export function AddSong({ existing }: Props) {
             <>
               <label>Pattern
                 <select value={pattern} onChange={(e) => setPattern(e.target.value as Pattern)}>
+                  <option value="simply">Bass then chord, like Simply Piano (bass on 1 & 3, chord on 2 & 4)</option>
                   <option value="whole">Whole notes (one chord per bar)</option>
                   <option value="half">Half notes (two per bar)</option>
                   <option value="quarter">Quarter notes (four per bar)</option>
