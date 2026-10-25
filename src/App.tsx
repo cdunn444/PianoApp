@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRoute } from './ui/router';
 import { Library } from './ui/Library';
 import { AddSong } from './ui/AddSong';
@@ -8,11 +8,21 @@ import { RotateOverlay } from './ui/RotateOverlay';
 import { useLibrary } from './store/library';
 import { preloadPiano } from './engine/audio';
 import { navigate } from './ui/router';
+import { applyUpdate, onUpdateAvailable, startUpdateChecks } from './engine/updates';
 
 export default function App() {
   const route = useRoute();
   const loaded = useLibrary((s) => s.loaded);
   const byId = useLibrary((s) => s.byId);
+
+  const [updateReady, setUpdateReady] = useState(false);
+  useEffect(() => onUpdateAvailable(setUpdateReady), []);
+  useEffect(() => startUpdateChecks(), []);
+  const inPlayer = route.path.startsWith('/play/');
+  useEffect(() => {
+    // Apply a new build as soon as nothing is being played; mid-song we only show a banner.
+    if (updateReady && !inPlayer) applyUpdate();
+  }, [updateReady, inPlayer]);
 
   useEffect(() => {
     void useLibrary.getState().init();
@@ -42,6 +52,9 @@ export default function App() {
     return (
       <>
         <Player key={song.id} song={song} />
+        {updateReady && (
+          <button className="update-banner" onClick={applyUpdate}>New version ready · tap to update</button>
+        )}
         <RotateOverlay />
       </>
     );
