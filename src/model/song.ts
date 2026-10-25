@@ -10,12 +10,16 @@ export interface NoteEvent {
 
 export type SourceFormat = 'chords' | 'tab' | 'notes';
 export type Pattern = 'whole' | 'half' | 'quarter' | 'broken';
-export type Voicing = 'root' | 'smooth';
+export type Voicing = 'position' | 'root' | 'smooth';
 
 export interface SongOptions {
   /** Rhythm pattern used when the source is a chord sheet. */
   pattern: Pattern;
-  /** 'root': every chord in root position around middle C. 'smooth': inversions for small hand movement. */
+  /**
+   * 'position' (default): Simply Piano style, the right hand stays in C position around middle C and
+   * each chord uses the inversion that fits under it (C = C E G, F = C F A, G = B D G).
+   * 'root': every chord in root position. 'smooth': inversions chosen purely for small hand moves.
+   */
   voicing: Voicing;
   /** Semitones to shift the whole song. */
   transpose: number;
@@ -52,7 +56,7 @@ export interface Song {
 
 export const DEFAULT_OPTIONS: SongOptions = {
   pattern: 'half',
-  voicing: 'root',
+  voicing: 'position',
   transpose: 0,
   splitPoint: 60,
   tabColumnBeats: 0.5,

@@ -52,11 +52,25 @@ describe('chord sheet', () => {
 });
 
 describe('voicing + patterns', () => {
+  it('C position keeps the thumb at middle C (Simply Piano style)', () => {
+    const C = voiceRightHand(parseChord('C')!, null);
+    expect(C).toEqual([60, 64, 67]); // C E G
+    const F = voiceRightHand(parseChord('F')!, C);
+    expect(F).toEqual([60, 65, 69]); // C F A
+    const G = voiceRightHand(parseChord('G')!, F);
+    expect(G).toEqual([59, 62, 67]); // B D G
+    expect(voiceRightHand(parseChord('C')!, G)).toEqual([60, 64, 67]);
+    expect(voiceRightHand(parseChord('G7')!, C)).toEqual([59, 65, 67]); // B F G
+    expect(voiceRightHand(parseChord('Am')!, C)).toEqual([60, 64, 69]); // C E A
+    expect(voiceRightHand(parseChord('Dm')!, C)).toEqual([62, 65, 69]); // D F A
+    expect(voiceRightHand(parseChord('Em')!, C)).toEqual([59, 64, 67]); // B E G
+    expect(voiceRightHand(parseChord('G/B')!, C)).toEqual([59, 62, 67]);
+    expect(voiceLeftHand(parseChord('G/B')!)).toBe(59); // B3
+    expect(voiceLeftHand(parseChord('C')!)).toBe(48); // C3
+  });
   it('root position puts the root in the middle-C octave', () => {
-    expect(voiceRightHand(parseChord('C')!, null)).toEqual([60, 64, 67]);
-    expect(voiceRightHand(parseChord('F')!, null)).toEqual([65, 69, 72]);
-    expect(voiceRightHand(parseChord('Am')!, [60, 64, 67])).toEqual([69, 72, 76]);
-    expect(voiceRightHand(parseChord('G/B')!, null)).toEqual([67, 71, 74]);
+    expect(voiceRightHand(parseChord('F')!, null, 'root')).toEqual([65, 69, 72]);
+    expect(voiceRightHand(parseChord('G/B')!, null, 'root')).toEqual([67, 71, 74]);
   });
   it('smooth voicing keeps movement small', () => {
     const g = voiceRightHand(parseChord('G')!, null, 'smooth');
@@ -65,8 +79,8 @@ describe('voicing + patterns', () => {
     const c = voiceRightHand(parseChord('C')!, g, 'smooth');
     const spread = Math.abs(c[0] - g[0]);
     expect(spread).toBeLessThanOrEqual(5);
-    expect(voiceLeftHand(parseChord('G')!)).toBe(43);
-    expect(voiceLeftHand(parseChord('C/E')!) % 12).toBe(4);
+    expect(voiceLeftHand(parseChord('G')!)).toBe(55);
+    expect(voiceLeftHand(parseChord('C/E')!)).toBe(52);
   });
   it('half pattern gives two hits per bar', () => {
     const notes = applyPattern([{ start: 0, duration: 4, rh: [67, 71, 74], lh: 43 }], 'half');
