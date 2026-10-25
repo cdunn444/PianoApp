@@ -8,6 +8,7 @@ export const LETTER_SEMITONES: Record<Letter, number> = { C: 0, D: 2, E: 4, F: 5
 
 const SHARP_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const FLAT_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const NEUTRAL_NAMES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
 
 /** Order in which sharps / flats are added to a key signature. */
 const SHARP_ORDER: Letter[] = ['F', 'C', 'G', 'D', 'A', 'E', 'B'];
@@ -68,8 +69,10 @@ export interface SpelledNote {
 export function spellMidi(midi: number, key: KeySignature): SpelledNote {
   const pc = ((midi % 12) + 12) % 12;
   const octave = Math.floor(midi / 12) - 1;
-  const useFlats = key.direction === -1;
-  const name = (useFlats ? FLAT_NAMES : SHARP_NAMES)[pc];
+  // Sharp keys spell sharps, flat keys spell flats. C major / A minor has no preference, so use
+  // the spellings that occur most in practice: Eb, Ab, Bb (borrowed chords) but F# and C#.
+  const name =
+    key.direction === -1 ? FLAT_NAMES[pc] : key.direction === 1 ? SHARP_NAMES[pc] : NEUTRAL_NAMES[pc];
   const letter = name[0] as Letter;
   const accidental: -1 | 0 | 1 = name.length > 1 ? (name[1] === '#' ? 1 : -1) : 0;
   return { letter, accidental, octave, midi };

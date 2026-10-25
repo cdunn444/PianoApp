@@ -52,6 +52,23 @@ Em         G/D        D          G
 Was blind but now I see
 `;
 
+
+// The Red Clay Strays – "I'm Still Fine". Chord chart only (lyrics omitted). Written in C as on
+// the guitar chart (capo 4 on the record); transpose +4 to match the recording in E.
+const IM_STILL_FINE = `[Verse 1]
+C | Em | Am | F | C | E Em | Am | F | C | Em | Am | F
+[Chorus]
+C | Em | Am | F | C | Em | Am | F | Dm | G | C
+[Interlude]
+C | Em | Am | F
+[Verse 2]
+C | E Em | Am | F | C | Em | Am | F
+[Chorus]
+C | Em | Am | F | C | Em | Am | F | Dm | G | C G/B | Am G | Dm | Fm/Ab
+[Final Chorus]
+C | Em | Am | F | C | Em | Am | F | Dm | G | C G/B | Am G | Dm | G | C | Em | Am | G | F
+`;
+
 export const STARTER_SONGS: Song[] = [
   starter('builtin_ode_to_joy', importSong(ODE_TO_JOY, { title: 'Ode to Joy', artist: 'Beethoven', format: 'notes' })),
   starter('builtin_twinkle', importSong(TWINKLE, { title: 'Twinkle Twinkle Little Star', artist: 'Traditional', format: 'notes' })),
@@ -65,6 +82,18 @@ export const STARTER_SONGS: Song[] = [
       timeSig: [3, 4],
       key: 'G',
       options: { pattern: 'half', beatsPerChord: 3 },
+    }),
+  ),
+  starter(
+    'builtin_im_still_fine',
+    importSong(IM_STILL_FINE, {
+      title: "I'm Still Fine",
+      artist: 'The Red Clay Strays',
+      format: 'chords',
+      bpm: 72,
+      timeSig: [4, 4],
+      key: 'C',
+      options: { pattern: 'half' },
     }),
   ),
 ];

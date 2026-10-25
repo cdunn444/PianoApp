@@ -14,6 +14,9 @@ describe('music helpers', () => {
     expect(midiToName(61, parseKey('G'))).toBe('C#4');
     expect(midiToName(61, parseKey('F'))).toBe('Db4');
     expect(midiToLetter(70, parseKey('F'))).toBe('B♭');
+    expect(midiToName(68, parseKey('C'))).toBe('Ab4');
+    expect(midiToName(66, parseKey('C'))).toBe('F#4');
+    expect(midiToName(68, parseKey('A'))).toBe('G#4');
   });
 
   it('builds key signatures', () => {
