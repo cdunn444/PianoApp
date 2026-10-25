@@ -16,9 +16,10 @@ export interface SongOptions {
   /** Rhythm pattern used when the source is a chord sheet. */
   pattern: Pattern;
   /**
-   * 'position' (default): Simply Piano style, the right hand stays in C position around middle C and
-   * each chord uses the inversion that fits under it (C = C E G, F = C F A, G = B D G).
-   * 'root': every chord in root position. 'smooth': inversions chosen purely for small hand moves.
+   * 'root' (default): every chord in root position, in the octave nearest middle C, so the notes
+   * read exactly as the chord is named (Am = A C E, F = F A C).
+   * 'position': Simply Piano style, the hand stays in C position and chords use whichever inversion
+   * fits under it (F = C F A, G = B D G). 'smooth': inversions chosen purely for small hand moves.
    */
   voicing: Voicing;
   /** Semitones to shift the whole song. */
@@ -56,7 +57,7 @@ export interface Song {
 
 export const DEFAULT_OPTIONS: SongOptions = {
   pattern: 'half',
-  voicing: 'position',
+  voicing: 'root',
   transpose: 0,
   splitPoint: 60,
   tabColumnBeats: 0.5,

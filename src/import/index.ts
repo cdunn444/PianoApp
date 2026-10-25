@@ -62,9 +62,9 @@ export function rebuildSong(song: Song): Song {
     const sheet = parseChordSheet(text, { beatsPerBar: bpb, beatsPerChord: o.beatsPerChord });
     let prev: number[] | null = null;
     const slots: ChordSlot[] = sheet.slots.map((s) => {
-      const rh = voiceRightHand(s.chord, prev, o.voicing ?? 'position');
+      const rh = voiceRightHand(s.chord, prev, o.voicing ?? 'root');
       prev = rh;
-      return { start: s.start, duration: s.duration, rh, lh: voiceLeftHand(s.chord) };
+      return { start: s.start, duration: s.duration, rh, lh: voiceLeftHand(s.chord, rh) };
     });
     notes = applyPattern(slots, o.pattern);
     chords = sheet.slots.map((s) => ({ start: s.start, name: s.chord.name }));

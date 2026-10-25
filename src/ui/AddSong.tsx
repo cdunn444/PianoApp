@@ -113,8 +113,8 @@ export function AddSong({ existing }: Props) {
               </label>
               <label>Right-hand chords
                 <select value={voicing} onChange={(e) => setVoicing(e.target.value as Voicing)}>
-                  <option value="position">C position, like Simply Piano (C = C E G, F = C F A, G = B D G)</option>
-                  <option value="root">Always root position (F = F A C, G = G B D)</option>
+                  <option value="root">Root position, as named (Am = A C E, F = F A C)</option>
+                  <option value="position">C position, hand stays put (F = C F A, G = B D G)</option>
                   <option value="smooth">Free inversions (smallest hand moves)</option>
                 </select>
               </label>

@@ -5,8 +5,7 @@ import type { Voicing } from '../model/song';
 export const RH_LOW = 60; // C4
 export const RH_HIGH = 79; // G5
 /** Left-hand bass range: the octave just below middle C, where a beginner's left hand sits. */
-export const LH_LOW = 48; // C3
-export const LH_HIGH = 59; // B3
+export const LH_LOW = 36; // C2
 /** "C position": the span a right hand covers with the thumb on or next to middle C. */
 export const POS_LOW = 57; // A3
 export const POS_HIGH = 71; // B4
@@ -16,22 +15,10 @@ export const POS_HIGH = 71; // B4
  * that moves as little as possible from the previous voicing. Extensions beyond the first four
  * chord tones are dropped so a beginner never has more than four notes in one hand.
  */
-export function voiceRightHand(chord: ParsedChord, previous: number[] | null, mode: Voicing = 'position'): number[] {
+export function voiceRightHand(chord: ParsedChord, previous: number[] | null, mode: Voicing = 'root'): number[] {
   const unique = [...new Set(chordTones(chord).map((i) => (chord.root + i) % 12))];
   if (mode === 'position') return voiceInPosition(chord, unique, previous);
-  if (mode === 'root') {
-    // Root position with the root in the octave starting at middle C: C4 E4 G4, F4 A4 C5, B4 D5 F#5.
-    const root = RH_LOW + ((chord.root - RH_LOW) % 12 + 12) % 12;
-    const voicing = [root];
-    let last = root;
-    for (const pc of unique.slice(1)) {
-      let next = last + (((pc - last) % 12) + 12) % 12;
-      if (next === last) next += 12;
-      voicing.push(next);
-      last = next;
-    }
-    return voicing;
-  }
+  if (mode === 'root') return voiceRootPosition(chord, unique);
   const candidates: number[][] = [];
   // Every rotation (inversion) starting on each octave inside the range.
   for (let rot = 0; rot < unique.length; rot++) {
@@ -71,6 +58,34 @@ export function chordTones(chord: ParsedChord): number[] {
   const third = iv.find((i) => i === 3 || i === 4 || i === 2 || i === 5) ?? iv[1];
   if (seventh !== undefined) return [0, third, seventh];
   return iv.slice(0, 3);
+}
+
+/**
+ * Root position, in the octave that sits closest to middle C: C = C4 E4 G4, F = F4 A4 C5,
+ * Am = A3 C4 E4, Em = E4 G4 B4, G = G3 B3 D4. Every chord always looks the same, and the notes
+ * read bottom-to-top exactly as the chord is named.
+ */
+function voiceRootPosition(chord: ParsedChord, pcs: number[]): number[] {
+  const order = [...pcs.slice(pcs.indexOf(chord.root)), ...pcs.slice(0, pcs.indexOf(chord.root))];
+  let best: number[] | null = null;
+  let bestDist = Infinity;
+  for (let root = 48; root <= 71; root++) {
+    if (root % 12 !== chord.root) continue;
+    const v = [root];
+    let last = root;
+    for (const pc of order.slice(1)) {
+      let next = last + (((pc - last) % 12) + 12) % 12;
+      if (next === last) next += 12;
+      v.push(next);
+      last = next;
+    }
+    const dist = Math.abs(avg(v) - 64); // E4, the middle of a hand resting on middle C
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = v;
+    }
+  }
+  return best ?? order.map((pc) => RH_LOW + (((pc - RH_LOW) % 12) + 12) % 12);
 }
 
 /**
@@ -118,7 +133,14 @@ function movement(voicing: number[], previous: number[]): number {
   return total + Math.abs(avg(voicing) - avg(previous)) * 0.5;
 }
 
-/** Left-hand bass note: the chord's bass pitch class in the octave below middle C (C3–B3). */
-export function voiceLeftHand(chord: ParsedChord): number {
-  return LH_LOW + ((chord.bass - LH_LOW) % 12 + 12) % 12;
+/**
+ * Left-hand bass note: the chord's bass pitch class in the highest octave that still sits at least
+ * a fifth below the right hand's lowest note, so the hands never share a key. With the right hand
+ * near middle C this lands in G2–F#3 (C = C3, Am = A2, F = F3, G/B = B2).
+ */
+export function voiceLeftHand(chord: ParsedChord, rightHand: number[] = [60]): number {
+  const ceiling = Math.min(...rightHand) - 7;
+  let n = ceiling - ((((ceiling - chord.bass) % 12) + 12) % 12);
+  while (n < LH_LOW) n += 12;
+  return n;
 }

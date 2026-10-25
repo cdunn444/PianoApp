@@ -52,25 +52,28 @@ describe('chord sheet', () => {
 });
 
 describe('voicing + patterns', () => {
-  it('C position keeps the thumb at middle C (Simply Piano style)', () => {
-    const C = voiceRightHand(parseChord('C')!, null);
-    expect(C).toEqual([60, 64, 67]); // C E G
-    const F = voiceRightHand(parseChord('F')!, C);
-    expect(F).toEqual([60, 65, 69]); // C F A
-    const G = voiceRightHand(parseChord('G')!, F);
-    expect(G).toEqual([59, 62, 67]); // B D G
-    expect(voiceRightHand(parseChord('C')!, G)).toEqual([60, 64, 67]);
-    expect(voiceRightHand(parseChord('G7')!, C)).toEqual([59, 65, 67]); // B F G
-    expect(voiceRightHand(parseChord('Am')!, C)).toEqual([60, 64, 69]); // C E A
-    expect(voiceRightHand(parseChord('Dm')!, C)).toEqual([62, 65, 69]); // D F A
-    expect(voiceRightHand(parseChord('Em')!, C)).toEqual([59, 64, 67]); // B E G
-    expect(voiceRightHand(parseChord('G/B')!, C)).toEqual([59, 62, 67]);
-    expect(voiceLeftHand(parseChord('G/B')!)).toBe(59); // B3
-    expect(voiceLeftHand(parseChord('C')!)).toBe(48); // C3
+  it('root position (default) reads exactly as the chord is named, near middle C', () => {
+    expect(voiceRightHand(parseChord('C')!, null)).toEqual([60, 64, 67]); // C4 E4 G4
+    expect(voiceRightHand(parseChord('F')!, null)).toEqual([65, 69, 72]); // F4 A4 C5
+    expect(voiceRightHand(parseChord('Am')!, null)).toEqual([57, 60, 64]); // A3 C4 E4
+    expect(voiceRightHand(parseChord('Em')!, null)).toEqual([64, 67, 71]); // E4 G4 B4
+    expect(voiceRightHand(parseChord('G')!, null)).toEqual([55, 59, 62]); // G3 B3 D4
+    expect(voiceRightHand(parseChord('Dm')!, null)).toEqual([62, 65, 69]); // D4 F4 A4
+    expect(voiceRightHand(parseChord('G/B')!, null)).toEqual([55, 59, 62]);
+    expect(voiceRightHand(parseChord('Fm/Ab')!, null)).toEqual([65, 68, 72]); // F4 Ab4 C5
+    // Same chord always looks the same, whatever came before.
+    expect(voiceRightHand(parseChord('F')!, [55, 59, 62])).toEqual([65, 69, 72]);
+    expect(voiceLeftHand(parseChord('C')!, [60, 64, 67])).toBe(48); // C3
+    expect(voiceLeftHand(parseChord('Am')!, [57, 60, 64])).toBe(45); // A2, never the same key as the right hand
+    expect(voiceLeftHand(parseChord('F')!, [65, 69, 72])).toBe(53); // F3
+    expect(voiceLeftHand(parseChord('G/B')!, [55, 59, 62])).toBe(47); // B2
+    expect(voiceLeftHand(parseChord('Fm/Ab')!, [65, 68, 72])).toBe(56); // Ab3
   });
-  it('root position puts the root in the middle-C octave', () => {
-    expect(voiceRightHand(parseChord('F')!, null, 'root')).toEqual([65, 69, 72]);
-    expect(voiceRightHand(parseChord('G/B')!, null, 'root')).toEqual([67, 71, 74]);
+  it('C position keeps the thumb at middle C (Simply Piano style)', () => {
+    const C = voiceRightHand(parseChord('C')!, null, 'position');
+    expect(C).toEqual([60, 64, 67]);
+    expect(voiceRightHand(parseChord('F')!, C, 'position')).toEqual([60, 65, 69]); // C F A
+    expect(voiceRightHand(parseChord('G')!, C, 'position')).toEqual([59, 62, 67]); // B D G
   });
   it('smooth voicing keeps movement small', () => {
     const g = voiceRightHand(parseChord('G')!, null, 'smooth');
@@ -79,8 +82,8 @@ describe('voicing + patterns', () => {
     const c = voiceRightHand(parseChord('C')!, g, 'smooth');
     const spread = Math.abs(c[0] - g[0]);
     expect(spread).toBeLessThanOrEqual(5);
-    expect(voiceLeftHand(parseChord('G')!)).toBe(55);
-    expect(voiceLeftHand(parseChord('C/E')!)).toBe(52);
+    expect(voiceLeftHand(parseChord('G')!, [67, 71, 74])).toBe(55);
+    expect(voiceLeftHand(parseChord('C/E')!, [60, 64, 67])).toBe(52);
   });
   it('half pattern gives two hits per bar', () => {
     const notes = applyPattern([{ start: 0, duration: 4, rh: [67, 71, 74], lh: 43 }], 'half');
