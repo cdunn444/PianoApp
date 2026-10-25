@@ -18,6 +18,7 @@ export function Player({ song }: { song: Song }) {
   const listen = usePlayer((s) => s.listen);
   const metronome = usePlayer((s) => s.metronome);
   const loop = usePlayer((s) => s.loop);
+  const bpm = usePlayer((s) => s.bpm) || song.bpm;
   const [active, setActive] = useState<Map<number, Hand>>(new Map());
   const [panelOpen, setPanelOpen] = useState(false);
   const [loopPicker, setLoopPicker] = useState(false);
@@ -73,7 +74,7 @@ export function Player({ song }: { song: Song }) {
           <div className="song-title">
             <strong>{song.title}</strong>
             {song.artist && <span> · {song.artist}</span>}
-            <span className="meta"> · {song.key} · {Math.round(song.bpm * speed)} bpm</span>
+            <span className="meta"> · {song.key} · {Math.round(bpm * speed)} bpm</span>
           </div>
           <div className="bar-nav">
             <button className="icon-btn small" onClick={() => usePlayer.getState().stepBar(-1)} disabled={bar <= 0} aria-label="Previous bar">
@@ -104,6 +105,14 @@ export function Player({ song }: { song: Song }) {
                   ))}
                 </div>
                 <label>Speed</label>
+              </div>
+              <div className="control">
+                <div className="tempo">
+                  <button className="icon-btn small" onClick={() => usePlayer.getState().setTempo(bpm - 4)} aria-label="Slower"><ArrowLeft /></button>
+                  <span>{bpm}</span>
+                  <button className="icon-btn small" onClick={() => usePlayer.getState().setTempo(bpm + 4)} aria-label="Faster"><ArrowRight /></button>
+                </div>
+                <label>Tempo{bpm !== song.bpm ? ' (saved)' : ''}</label>
               </div>
               <div className="control">
                 <button className={`icon-btn ${loop ? 'on' : ''}`} onClick={() => setLoopPicker(true)} aria-label="Practice a section">

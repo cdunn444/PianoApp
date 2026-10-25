@@ -28,7 +28,7 @@ The site then lives at `https://<user>.github.io/<repo>/`.
 - **Listen** – toggles the piano sound. Turn it off to play the part yourself with just the metronome.
 - **Bar counter** (top right) – step a bar at a time with the arrows; tap the number to pick a practice loop.
 - **Scrub** – drag the music left or right with a finger, or tap/drag the progress bar under the title, to rewind or fast-forward. Playback resumes where you let go.
-- **More** (bottom right) – Speed (0.6x / 0.8x / 1.0x), **Practice** (loop a section or a bar range), **Metronome**.
+- **More** (bottom right) – Speed (0.6x / 0.8x / 1.0x), **Tempo** (nudge the song's base bpm; remembered per song on this device), **Practice** (loop a section or a bar range), **Metronome**.
 - **Keys** – the on-screen keyboard lights left-hand notes blue and right-hand notes orange. Tapping a key plays it.
 - **Share** (library) – sends a link that carries the whole song, so a song added on one phone can be opened on another.
 

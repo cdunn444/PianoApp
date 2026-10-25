@@ -134,6 +134,9 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
 }
 .segmented button.on { background: #f6f2ff; color: #6b3fe0; }
 .control .icon-btn { width: 50px; height: 50px; border-radius: 14px; }
+.tempo { display: flex; align-items: center; gap: 4px; background: var(--card); border-radius: 14px; padding: 3px; }
+.tempo span { min-width: 44px; text-align: center; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tempo .icon-btn.small { width: 40px; height: 40px; background: transparent; }
 
 .toast {
   position: absolute; top: 56px; left: 50%; transform: translateX(-50%);
@@ -211,6 +214,8 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
   .stage-top { height: 42px; }
   .bottom-strip { height: 82px; }
   .segmented button { padding: 6px 8px; font-size: 15px; min-width: 52px; }
+  .tempo .icon-btn.small { width: 36px; height: 36px; }
+  .tempo span { font-size: 15px; min-width: 38px; }
   .control .icon-btn { width: 44px; height: 44px; }
   .control label { font-size: 11px; }
 }

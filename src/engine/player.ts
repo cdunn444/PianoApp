@@ -1,5 +1,6 @@
 import * as Tone from 'tone';
 import { create } from 'zustand';
+import { get as idbGet, set as idbSet } from 'idb-keyval';
 import { beatsPerBar, songBars, songLengthBeats, type Song } from '../model/song';
 import { PPQ, beatsToTicks, playClick, playNote, unlockAudio } from './audio';
 
@@ -21,6 +22,9 @@ interface PlayerState {
   loop: Loop | null;
   /** Bar index (0-based) the playhead is in; updated a few times a second for the UI. */
   bar: number;
+  /** Base tempo in use (the song's bpm unless the user adjusted it for this song). */
+  bpm: number;
+  setTempo: (bpm: number) => void;
   load: (song: Song) => void;
   unload: () => void;
   play: () => Promise<void>;
@@ -106,10 +110,12 @@ function schedule(song: Song) {
   }, `${(total + off) * PPQ}i`);
 }
 
-function applyTempo(song: Song, speed: number) {
-  T().bpm.value = song.bpm * speed;
+function applyTempo(song: Song, speed: number, bpm = usePlayer.getState().bpm || song.bpm) {
+  T().bpm.value = bpm * speed;
   T().timeSignature = song.timeSig;
 }
+
+const tempoKey = (song: Song) => `pianoapp.tempo.${song.id}`;
 
 function applyLoop(song: Song, loop: Loop | null) {
   const t = T();
@@ -169,14 +175,32 @@ export const usePlayer = create<PlayerState>((set, get) => ({
   metronome: false,
   loop: null,
   bar: 0,
+  bpm: 0,
 
   load(song) {
     T().stop();
     clearSchedule();
     schedule(song);
-    applyTempo(song, get().speed);
+    set({ song, status: 'idle', loop: null, bar: 0, bpm: song.bpm });
+    applyTempo(song, get().speed, song.bpm);
     T().ticks = barTicks(song, 0, false);
-    set({ song, status: 'idle', loop: null, bar: 0 });
+    idbGet<number>(tempoKey(song))
+      .then((saved) => {
+        if (saved && get().song?.id === song.id) {
+          set({ bpm: saved });
+          applyTempo(song, get().speed, saved);
+        }
+      })
+      .catch(() => undefined);
+  },
+
+  setTempo(bpm) {
+    const { song, speed } = get();
+    if (!song) return;
+    const b = Math.min(240, Math.max(30, Math.round(bpm)));
+    set({ bpm: b });
+    applyTempo(song, speed, b);
+    idbSet(tempoKey(song), b).catch(() => undefined);
   },
 
   unload() {
