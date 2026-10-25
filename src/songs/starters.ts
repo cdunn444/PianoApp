@@ -69,6 +69,26 @@ C | Em | Am | F | C | Em | Am | F | Dm | G | C G/B | Am G | Dm | Fm/Ab
 C | Em | Am | F | C | Em | Am | F | Dm | G | C G/B | Am G | Dm | G | C | Em | Am | G | F
 `;
 
+// The Wild Feathers – "Left My Woman". Chord chart only (lyrics omitted). Chorus lines run
+// C G F in one bar and resolve to C in the next; the last chorus line lets the F ring out.
+const LEFT_MY_WOMAN = `[Verse 1]
+C | Am | F | C | C | Am | F | C | C | Am | F | C
+[Chorus]
+C G F F | C | C G F F | C | C G F F | C | C G F F
+[Interlude]
+C | Am | F | C
+[Verse 2]
+C | Am | F | C | C | Am | F | C | C | Am | F | C
+[Chorus]
+C G F F | C | C G F F | C | C G F F | C | C G F F
+[Bridge]
+G | Am | G | Am | G | Am | F | F
+[Solo]
+F | C | F | C | F | C | F | C
+[Final Chorus]
+C G F F | C | C G F F | C | C G F F | C | C G F F | C | C G F F | F
+`;
+
 export const STARTER_SONGS: Song[] = [
   starter('builtin_ode_to_joy', importSong(ODE_TO_JOY, { title: 'Ode to Joy', artist: 'Beethoven', format: 'notes' })),
   starter('builtin_twinkle', importSong(TWINKLE, { title: 'Twinkle Twinkle Little Star', artist: 'Traditional', format: 'notes' })),
@@ -91,6 +111,18 @@ export const STARTER_SONGS: Song[] = [
       artist: 'The Red Clay Strays',
       format: 'chords',
       bpm: 72,
+      timeSig: [4, 4],
+      key: 'C',
+      options: { pattern: 'half' },
+    }),
+  ),
+  starter(
+    'builtin_left_my_woman',
+    importSong(LEFT_MY_WOMAN, {
+      title: 'Left My Woman',
+      artist: 'The Wild Feathers',
+      format: 'chords',
+      bpm: 120,
       timeSig: [4, 4],
       key: 'C',
       options: { pattern: 'half' },

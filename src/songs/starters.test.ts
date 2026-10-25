@@ -34,3 +34,16 @@ describe("I'm Still Fine", () => {
     expect(s.key).toBe('C');
   });
 });
+
+describe('Left My Woman', () => {
+  it('has the expected structure', () => {
+    const s = STARTER_SONGS.find((x) => x.id === 'builtin_left_my_woman')!;
+    expect(songBars(s)).toBe(12 + 7 + 4 + 12 + 7 + 8 + 8 + 10);
+    expect(s.sections.map((x) => x.name)).toEqual(['Verse 1', 'Chorus', 'Interlude', 'Verse 2', 'Chorus', 'Bridge', 'Solo', 'Final Chorus']);
+    // Chorus bar: C on beat 1, G on beat 2, F for beats 3-4, then a bar of C.
+    const chorusStart = 12 * 4;
+    const names = s.chords.filter((c) => c.start >= chorusStart && c.start < chorusStart + 8).map((c) => [c.start - chorusStart, c.name]);
+    expect(names).toEqual([[0, 'C'], [1, 'G'], [2, 'F'], [4, 'C']]);
+    expect(s.key).toBe('C');
+  });
+});

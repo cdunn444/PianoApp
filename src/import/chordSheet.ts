@@ -127,13 +127,20 @@ export function parseChordSheet(text: string, opts: SheetOptions): ParsedSheet {
           continue;
         }
         const each = opts.beatsPerBar / chordTokens.length;
+        let segStart = true;
         for (const tok of chordTokens) {
           const ch = parseChord(tok);
-          if (ch) {
+          const prev = slots[slots.length - 1];
+          if (ch && !segStart && prev && prev.chord.name === ch.name) {
+            // "C G F F": a repeated chord inside a bar holds the previous one longer.
+            prev.duration += each;
+            t += each;
+          } else if (ch) {
             columns.push({ col: line.indexOf(tok), start: t });
             addSlot(ch, each);
           } else if (lastChord) addSlot(lastChord, each);
           else t += each;
+          segStart = false;
         }
       }
       pendingColumns = columns;
