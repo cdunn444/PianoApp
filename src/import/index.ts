@@ -62,7 +62,7 @@ export function rebuildSong(song: Song): Song {
     const sheet = parseChordSheet(text, { beatsPerBar: bpb, beatsPerChord: o.beatsPerChord });
     let prev: number[] | null = null;
     const slots: ChordSlot[] = sheet.slots.map((s) => {
-      const rh = voiceRightHand(s.chord, prev);
+      const rh = voiceRightHand(s.chord, prev, o.voicing ?? 'root');
       prev = rh;
       return { start: s.start, duration: s.duration, rh, lh: voiceLeftHand(s.chord) };
     });

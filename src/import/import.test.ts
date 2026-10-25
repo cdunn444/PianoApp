@@ -52,11 +52,17 @@ describe('chord sheet', () => {
 });
 
 describe('voicing + patterns', () => {
-  it('voices a triad in range and keeps movement small', () => {
-    const g = voiceRightHand(parseChord('G')!, null);
+  it('root position puts the root in the middle-C octave', () => {
+    expect(voiceRightHand(parseChord('C')!, null)).toEqual([60, 64, 67]);
+    expect(voiceRightHand(parseChord('F')!, null)).toEqual([65, 69, 72]);
+    expect(voiceRightHand(parseChord('Am')!, [60, 64, 67])).toEqual([69, 72, 76]);
+    expect(voiceRightHand(parseChord('G/B')!, null)).toEqual([67, 71, 74]);
+  });
+  it('smooth voicing keeps movement small', () => {
+    const g = voiceRightHand(parseChord('G')!, null, 'smooth');
     expect(g.every((m) => m >= 60 && m <= 79)).toBe(true);
     expect(g.map((m) => m % 12).sort((a, b) => a - b)).toEqual([2, 7, 11]);
-    const c = voiceRightHand(parseChord('C')!, g);
+    const c = voiceRightHand(parseChord('C')!, g, 'smooth');
     const spread = Math.abs(c[0] - g[0]);
     expect(spread).toBeLessThanOrEqual(5);
     expect(voiceLeftHand(parseChord('G')!)).toBe(43);

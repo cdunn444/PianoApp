@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { detectFormat, importSong, rebuildSong } from '../import';
-import { DEFAULT_OPTIONS, songBars, type Pattern, type Song, type SourceFormat } from '../model/song';
+import { DEFAULT_OPTIONS, songBars, type Pattern, type Song, type SourceFormat, type Voicing } from '../model/song';
 import { useLibrary } from '../store/library';
 import { navigate } from './router';
 import { BackIcon } from './Icons';
@@ -24,6 +24,7 @@ export function AddSong({ existing }: Props) {
   const [timeSig, setTimeSig] = useState<string>(existing ? `${existing.timeSig[0]}/${existing.timeSig[1]}` : '4/4');
   const [key, setKey] = useState(existing?.key ?? '');
   const [pattern, setPattern] = useState<Pattern>(existing?.options.pattern ?? DEFAULT_OPTIONS.pattern);
+  const [voicing, setVoicing] = useState<Voicing>(existing?.options.voicing ?? DEFAULT_OPTIONS.voicing);
   const [transpose, setTranspose] = useState(existing?.options.transpose ?? 0);
   const [beatsPerChord, setBeatsPerChord] = useState(existing?.options.beatsPerChord ?? DEFAULT_OPTIONS.beatsPerChord);
   const [tabColumn, setTabColumn] = useState(existing?.options.tabColumnBeats ?? DEFAULT_OPTIONS.tabColumnBeats);
@@ -43,13 +44,13 @@ export function AddSong({ existing }: Props) {
         timeSig: ts ? [parseInt(ts[1], 10), parseInt(ts[2], 10)] : [4, 4],
         key: key.trim() || undefined,
         format: detected,
-        options: { pattern, transpose, beatsPerChord, tabColumnBeats: tabColumn, splitPoint },
+        options: { pattern, voicing, transpose, beatsPerChord, tabColumnBeats: tabColumn, splitPoint },
       });
       return song;
     } catch (e) {
       return { error: String(e) } as { error: string };
     }
-  }, [text, title, artist, bpm, timeSig, key, detected, pattern, transpose, beatsPerChord, tabColumn, splitPoint]);
+  }, [text, title, artist, bpm, timeSig, key, detected, pattern, voicing, transpose, beatsPerChord, tabColumn, splitPoint]);
 
   const previewSong = preview && 'notes' in preview ? preview : null;
 
@@ -108,6 +109,12 @@ export function AddSong({ existing }: Props) {
                   <option value="half">Half notes (two per bar)</option>
                   <option value="quarter">Quarter notes (four per bar)</option>
                   <option value="broken">Broken chord (eighths)</option>
+                </select>
+              </label>
+              <label>Right-hand chords
+                <select value={voicing} onChange={(e) => setVoicing(e.target.value as Voicing)}>
+                  <option value="root">Root position (C = C E G)</option>
+                  <option value="smooth">Inversions (smaller hand moves)</option>
                 </select>
               </label>
               <label>Beats per chord (no bar lines)

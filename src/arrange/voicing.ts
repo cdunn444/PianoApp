@@ -1,4 +1,5 @@
 import type { ParsedChord } from '../import/chords';
+import type { Voicing } from '../model/song';
 
 /** Right-hand close voicing range (inclusive). */
 export const RH_LOW = 60; // C4
@@ -12,8 +13,21 @@ export const LH_HIGH = 59; // B3
  * that moves as little as possible from the previous voicing. Extensions beyond the first four
  * chord tones are dropped so a beginner never has more than four notes in one hand.
  */
-export function voiceRightHand(chord: ParsedChord, previous: number[] | null): number[] {
+export function voiceRightHand(chord: ParsedChord, previous: number[] | null, mode: Voicing = 'root'): number[] {
   const unique = [...new Set(chordTones(chord).map((i) => (chord.root + i) % 12))];
+  if (mode === 'root') {
+    // Root position with the root in the octave starting at middle C: C4 E4 G4, F4 A4 C5, B4 D5 F#5.
+    const root = RH_LOW + ((chord.root - RH_LOW) % 12 + 12) % 12;
+    const voicing = [root];
+    let last = root;
+    for (const pc of unique.slice(1)) {
+      let next = last + (((pc - last) % 12) + 12) % 12;
+      if (next === last) next += 12;
+      voicing.push(next);
+      last = next;
+    }
+    return voicing;
+  }
   const candidates: number[][] = [];
   // Every rotation (inversion) starting on each octave inside the range.
   for (let rot = 0; rot < unique.length; rot++) {

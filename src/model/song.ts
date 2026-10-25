@@ -10,10 +10,13 @@ export interface NoteEvent {
 
 export type SourceFormat = 'chords' | 'tab' | 'notes';
 export type Pattern = 'whole' | 'half' | 'quarter' | 'broken';
+export type Voicing = 'root' | 'smooth';
 
 export interface SongOptions {
   /** Rhythm pattern used when the source is a chord sheet. */
   pattern: Pattern;
+  /** 'root': every chord in root position around middle C. 'smooth': inversions for small hand movement. */
+  voicing: Voicing;
   /** Semitones to shift the whole song. */
   transpose: number;
   /** MIDI number: notes below go to the left hand (tab import). */
@@ -49,6 +52,7 @@ export interface Song {
 
 export const DEFAULT_OPTIONS: SongOptions = {
   pattern: 'half',
+  voicing: 'root',
   transpose: 0,
   splitPoint: 60,
   tabColumnBeats: 0.5,

@@ -82,7 +82,11 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
   font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums;
 }
 
-.staff-wrap { flex: 1; min-height: 120px; position: relative; }
+.staff-wrap { flex: 1; min-height: 120px; position: relative; touch-action: none; cursor: grab; }
+.staff-wrap:active { cursor: grabbing; }
+.scrub { height: 18px; flex: none; padding: 6px 16px 0; touch-action: none; cursor: pointer; }
+.scrub-track { height: 5px; border-radius: 3px; background: rgba(0, 0, 0, 0.3); overflow: hidden; }
+.scrub-fill { height: 100%; width: 0; background: var(--accent); border-radius: 3px; }
 .staff { display: block; }
 .staff-line { stroke: #6f6392; stroke-width: 0.9; }
 .barline { stroke: var(--paper-ink); }
@@ -96,12 +100,8 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
 .section-name { font-size: 9px; fill: var(--accent); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
 .note .head { fill: var(--paper-ink); transition: fill 0.08s; }
 .note .dot { fill: var(--paper-ink); }
-.note-letter { font-size: 9px; font-weight: 800; text-anchor: middle; pointer-events: none; fill: #fff; }
-.note.hollow .note-letter { fill: var(--paper-ink); paint-order: stroke; stroke: #f3f0fa; stroke-width: 2.6px; stroke-linejoin: round; }
-.note.active .note-letter { stroke: none; }
 .note.active.hand-R .head { fill: var(--rh); }
 .note.active.hand-L .head { fill: var(--lh); }
-.note.active .note-letter { fill: #1b1335; }
 .note.active .head { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9)); }
 
 .bottom-strip { height: 92px; flex: none; display: flex; align-items: stretch; gap: 8px; padding: 6px 10px 8px; }

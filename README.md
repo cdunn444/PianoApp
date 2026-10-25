@@ -27,6 +27,7 @@ The site then lives at `https://<user>.github.io/<repo>/`.
 - **Play / Pause** – one bar of clicks counts in, then the music scrolls. **Restart** goes back to the start.
 - **Listen** – toggles the piano sound. Turn it off to play the part yourself with just the metronome.
 - **Bar counter** (top right) – step a bar at a time with the arrows; tap the number to pick a practice loop.
+- **Scrub** – drag the music left or right with a finger, or tap/drag the progress bar under the title, to rewind or fast-forward. Playback resumes where you let go.
 - **More** (bottom right) – Speed (0.6x / 0.8x / 1.0x), **Practice** (loop a section or a bar range), **Metronome**.
 - **Keys** – the on-screen keyboard lights left-hand notes blue and right-hand notes orange. Tapping a key plays it.
 - **Share** (library) – sends a link that carries the whole song, so a song added on one phone can be opened on another.
@@ -46,8 +47,10 @@ G | D | Em C | G          <- bar lines: chords in one bar share it
 ```
 
 Without bar lines every chord lasts **Beats per chord** (default one bar). The arrangement is
-left hand root, right hand triad (seventh chords become root–third–seventh), with a selectable
-rhythm **Pattern**: whole notes, half notes, quarter notes, or broken chords.
+left hand root, right hand triad (seventh chords become root–third–seventh) in root position
+around middle C (C = C E G), with a selectable rhythm **Pattern**: whole notes, half notes,
+quarter notes, or broken chords. **Right-hand chords** can be switched to inversions for
+smaller hand movements once root position feels easy.
 
 ### 2. Guitar tab
 

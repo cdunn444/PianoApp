@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Hand, Song } from '../model/song';
-import { songBars } from '../model/song';
+import { songBars, songLengthBeats } from '../model/song';
+import { subscribeFrame } from '../engine/clock';
+import { getPositionBeats } from '../engine/player';
 import { SPEEDS, usePlayer, type Loop, type Speed } from '../engine/player';
 import { playNote, unlockAudio, onLoadState, type LoadState } from '../engine/audio';
 import { Staff } from './Staff';
@@ -87,6 +89,7 @@ export function Player({ song }: { song: Song }) {
           </div>
         </header>
 
+        <ScrubBar song={song} />
         <Staff song={song} onActive={onActive} />
 
         <div className="bottom-strip">
@@ -131,6 +134,42 @@ export function Player({ song }: { song: Song }) {
       </main>
 
       {loopPicker && <LoopPicker song={song} loop={loop} onClose={() => setLoopPicker(false)} />}
+    </div>
+  );
+}
+
+/** Thin progress bar under the header: tap or drag anywhere on it to jump. */
+function ScrubBar({ song }: { song: Song }) {
+  const fill = useRef<HTMLDivElement>(null);
+  const total = songLengthBeats(song);
+  useEffect(
+    () =>
+      subscribeFrame(() => {
+        const f = Math.min(1, Math.max(0, getPositionBeats() / total));
+        if (fill.current) fill.current.style.width = `${f * 100}%`;
+      }),
+    [total],
+  );
+  const seek = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    usePlayer.getState().seekBeats(f * total);
+  };
+  return (
+    <div
+      className="scrub"
+      onPointerDown={(e) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        usePlayer.getState().scrubStart();
+        seek(e);
+      }}
+      onPointerMove={(e) => {
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) seek(e);
+      }}
+      onPointerUp={() => usePlayer.getState().scrubEnd()}
+      onPointerCancel={() => usePlayer.getState().scrubEnd()}
+    >
+      <div className="scrub-track"><div className="scrub-fill" ref={fill} /></div>
     </div>
   );
 }

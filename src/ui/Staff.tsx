@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Song } from '../model/song';
 import { subscribeFrame } from '../engine/clock';
-import { getPositionBeats } from '../engine/player';
+import { getPositionBeats, usePlayer } from '../engine/player';
 import { GLYPHS } from './staff/glyphs';
 import {
   BASS_TOP, HALF, LS, PX_PER_BEAT, STAFF_HEIGHT, TREBLE_TOP, keySignaturePositions, layoutSong, noteY,
@@ -37,6 +37,28 @@ export function Staff({ song, onActive }: Props) {
 
   const H = STAFF_HEIGHT;
   const W = Math.max(300, (size.w * H) / Math.max(1, size.h));
+  // Screen pixels per SVG unit (the SVG is scaled to fit the container height).
+  const pxPerUnit = Math.max(0.1, size.h / H);
+
+  // Drag the music left/right to scrub.
+  const drag = useRef<{ x: number; pos: number; id: number } | null>(null);
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    drag.current = { x: e.clientX, pos: getPositionBeats(), id: e.pointerId };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    usePlayer.getState().scrubStart();
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const beats = (e.clientX - d.x) / (PX_PER_BEAT * pxPerUnit);
+    usePlayer.getState().seekBeats(d.pos - beats);
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag.current || drag.current.id !== e.pointerId) return;
+    drag.current = null;
+    usePlayer.getState().scrubEnd();
+  };
   const headerW = 14 + 36 + Math.abs(layout.key.count) * 10 + 10 + 24 + 10;
   const playheadX = headerW + 30;
 
@@ -73,7 +95,14 @@ export function Staff({ song, onActive }: Props) {
   const timeX = keyX + Math.abs(layout.key.count) * 10 + 8;
 
   return (
-    <div className="staff-wrap" ref={wrapRef}>
+    <div
+      className="staff-wrap"
+      ref={wrapRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+    >
       <svg className="staff" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" width="100%" height="100%">
         <defs>
           <clipPath id="staff-clip">
@@ -193,7 +222,6 @@ function Note({ n, register }: { n: LaidNote; register: (el: SVGGElement | null)
       )}
       <path d={head.d} transform={`translate(${x - hw} ${n.y})`} className="head" />
       {n.dotted && <circle cx={Math.max(x, n.x) + hw + 4} cy={onLine ? n.y - HALF : n.y} r={1.8} className="dot" />}
-      <text x={x} y={n.y + 3.2} className="note-letter">{n.letter}</text>
     </g>
   );
 }

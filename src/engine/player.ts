@@ -28,6 +28,10 @@ interface PlayerState {
   togglePlay: () => void;
   restart: () => void;
   seekBar: (bar: number) => void;
+  /** Move the playhead to an exact beat (used by scrubbing). */
+  seekBeats: (beat: number) => void;
+  scrubStart: () => void;
+  scrubEnd: () => void;
   stepBar: (delta: number) => void;
   setSpeed: (s: Speed) => void;
   setListen: (v: boolean) => void;
@@ -41,6 +45,7 @@ let clickPart: Tone.Part | null = null;
 let endEventId: number | null = null;
 let wakeLock: { release: () => Promise<void> } | null = null;
 let barTimer: number | null = null;
+let resumeAfterScrub = false;
 
 const T = () => Tone.getTransport();
 
@@ -234,6 +239,34 @@ export const usePlayer = create<PlayerState>((set, get) => ({
     const wasPlaying = status === 'playing' || status === 'countin';
     T().ticks = barTicks(song, b, false);
     set({ bar: b, status: wasPlaying ? 'playing' : 'idle' });
+  },
+
+  seekBeats(beat) {
+    const { song, status } = get();
+    if (!song) return;
+    const total = songLengthBeats(song);
+    const b = Math.min(total - 0.001, Math.max(0, beat));
+    T().ticks = (offsetBeats(song) + b) * PPQ;
+    const bar = Math.floor(b / beatsPerBar(song));
+    set({ bar, status: status === 'ended' ? 'paused' : status === 'countin' ? 'playing' : status });
+  },
+
+  scrubStart() {
+    const st = get().status;
+    resumeAfterScrub = st === 'playing' || st === 'countin';
+    if (resumeAfterScrub) {
+      T().pause();
+      set({ status: 'paused' });
+    }
+  },
+
+  scrubEnd() {
+    if (resumeAfterScrub) {
+      resumeAfterScrub = false;
+      T().start();
+      set({ status: 'playing' });
+      startBarTimer();
+    }
   },
 
   stepBar(delta) {
