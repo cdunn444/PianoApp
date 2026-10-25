@@ -193,7 +193,7 @@ function Note({ n, register }: { n: LaidNote; register: (el: SVGGElement | null)
       )}
       <path d={head.d} transform={`translate(${x - hw} ${n.y})`} className="head" />
       {n.dotted && <circle cx={Math.max(x, n.x) + hw + 4} cy={onLine ? n.y - HALF : n.y} r={1.8} className="dot" />}
-      <text x={x} y={n.y + 3} className="note-letter">{n.letter}</text>
+      <text x={x} y={n.y + 3.2} className="note-letter">{n.letter}</text>
     </g>
   );
 }

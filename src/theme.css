@@ -96,8 +96,9 @@ h1, h2, h3 { margin: 0; font-weight: 700; }
 .section-name { font-size: 9px; fill: var(--accent); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
 .note .head { fill: var(--paper-ink); transition: fill 0.08s; }
 .note .dot { fill: var(--paper-ink); }
-.note-letter { font-size: 8.4px; font-weight: 800; text-anchor: middle; pointer-events: none; fill: #fff; }
-.note.hollow .note-letter { fill: var(--paper-ink); }
+.note-letter { font-size: 9px; font-weight: 800; text-anchor: middle; pointer-events: none; fill: #fff; }
+.note.hollow .note-letter { fill: var(--paper-ink); paint-order: stroke; stroke: #f3f0fa; stroke-width: 2.6px; stroke-linejoin: round; }
+.note.active .note-letter { stroke: none; }
 .note.active.hand-R .head { fill: var(--rh); }
 .note.active.hand-L .head { fill: var(--lh); }
 .note.active .note-letter { fill: #1b1335; }

@@ -139,7 +139,7 @@ export function layoutSong(song: Song): Layout {
     const middle = (g[0].hand === 'R' ? TREBLE_TOP : BASS_TOP) + 2 * LS;
     const up = (Math.min(...ys) + Math.max(...ys)) / 2 > middle; // below the middle line: stems up
     stemUpOf.set(k, up);
-    const w = g.some((n) => n.head === 'whole') ? 18 : 13.4;
+    const w = g.some((n) => n.head === 'whole') ? 19.5 : 13.6;
     if (up) {
       g.sort((a, b) => b.y - a.y); // bottom first
       for (let i = 1; i < g.length; i++) {
@@ -170,7 +170,7 @@ export function layoutSong(song: Song): Layout {
     const bottom = Math.max(...ys);
     const up = stemUpOf.get(k.slice(0, k.lastIndexOf('|'))) ?? true;
     const len = 3.5 * LS;
-    const hw = 13.4 / 2;
+    const hw = 14.17 / 2;
     const x = g[0].x + (up ? hw - 0.7 : -hw + 0.7);
     stems.push(up ? { x, y1: bottom, y2: top - len, up, head: g[0].head } : { x, y1: top, y2: bottom + len, up, head: g[0].head });
   }
